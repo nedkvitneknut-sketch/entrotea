@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entro Te — Smaksarkivet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#F5EDD8;--cream2:#EDE0C4;--brown:#3D2B1F;--brown2:#5C3D2E;
+  --green:#2D5016;--green2:#4A7C2B;--green3:#8AB85A;
+  --gold:#C8922A;--gold2:#E8B84B;--rose:#C4614A;--fog:rgba(61,43,31,0.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--brown);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4}
+@keyframes steam{0%{transform:translateY(0) scaleX(1);opacity:.6}50%{transform:translateY(-30px) scaleX(1.4);opacity:.3}100%{transform:translateY(-60px) scaleX(.8);opacity:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes leafDrift{0%{transform:translateX(0) translateY(0) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateX(var(--tx)) translateY(-100vh) rotate(var(--rot));opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.leaf{position:fixed;pointer-events:none;z-index:1;font-size:18px;animation:leafDrift var(--dur) linear infinite;animation-delay:var(--delay);bottom:-20px;left:var(--left)}
+
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--cream);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem}
+.spinner{width:36px;height:36px;border:3px solid var(--cream2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+.loading-text{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--brown2)}
+
+/* SYNC */
+#sync-indicator{position:fixed;bottom:1rem;right:1rem;background:var(--brown);color:var(--cream);font-size:12px;padding:6px 14px;border-radius:20px;z-index:9998;opacity:0;transition:opacity .3s;pointer-events:none;display:flex;align-items:center;gap:6px}
+#sync-indicator.show{opacity:1}
+.sync-spin{width:10px;height:10px;border:1.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative}
+.login-art{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;pointer-events:none}
+.login-art-circle{position:absolute;border-radius:50%;border:1px solid rgba(200,146,42,0.15)}
+.teacup-hero{font-size:80px;animation:float 4s ease-in-out infinite;margin-bottom:1rem;position:relative;z-index:2}
+.steam-wrap{position:absolute;top:-40px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+.steam-line{width:3px;height:28px;background:linear-gradient(to top,var(--gold),transparent);border-radius:2px;animation:steam 2.5s ease-in-out infinite}
+.steam-line:nth-child(2){animation-delay:.4s}.steam-line:nth-child(3){animation-delay:.8s}
+.login-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,3.5rem);font-weight:700;color:var(--brown);text-align:center;line-height:1.1;position:relative;z-index:2}
+.login-sub{font-size:14px;color:var(--brown2);letter-spacing:.12em;text-transform:uppercase;margin-top:8px;margin-bottom:2.5rem;position:relative;z-index:2}
+.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;max-width:640px;width:100%;position:relative;z-index:2}
+.login-person{background:white;border:1.5px solid var(--cream2);border-radius:16px;padding:20px 12px;cursor:pointer;text-align:center;transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+.login-person:hover{transform:translateY(-4px) scale(1.03);border-color:var(--gold);box-shadow:0 8px 30px rgba(61,43,31,.12)}
+.login-avatar{width:52px;height:52px;border-radius:50%;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);margin:0 auto 10px;transition:all .2s}
+.login-person:hover .login-avatar{background:var(--gold2);color:white}
+.login-person-name{font-size:14px;font-weight:500;color:var(--brown)}
+.login-person-cups{font-size:11px;color:var(--brown2);margin-top:3px}
+
+/* APP */
+#app{display:none;min-height:100vh}
+.topbar{background:var(--brown);color:var(--cream);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+.topbar-logo span{color:var(--gold2)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:white}
+.topbar-name{font-size:14px;font-weight:500}
+.logout-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--cream);font-size:12px;padding:5px 12px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
+.logout-btn:hover{background:rgba(255,255,255,.2)}
+.nav-tabs{background:white;border-bottom:1px solid var(--cream2);display:flex;padding:0 2rem;overflow-x:auto}
+.nav-tab{padding:14px 20px;font-size:13px;font-weight:500;color:var(--brown2);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.nav-tab:hover{color:var(--brown)}
+.nav-tab.active{color:var(--brown);border-bottom-color:var(--gold)}
+.main{padding:2rem;max-width:1100px;margin:0 auto}
+.page{display:none;animation:fadeIn .3s ease}
+.page.active{display:block}
+
+/* RATE */
+.rate-header{margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.rate-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700}
+.rate-title em{font-style:italic;color:var(--gold)}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem}
+.filter-btn{background:white;border:1.5px solid var(--cream2);color:var(--brown2);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:var(--brown);border-color:var(--brown);color:var(--cream)}
+.search-input{flex:1;min-width:200px;background:white;border:1.5px solid var(--cream2);color:var(--brown);font-size:13px;padding:7px 14px 7px 36px;border-radius:20px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235C3D2E' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
+.search-input:focus{border-color:var(--gold)}
+.tea-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.tea-card{background:white;border:1.5px solid var(--cream2);border-radius:16px;padding:16px;transition:all .2s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;animation:fadeIn .3s ease both}
+.tea-card:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(61,43,31,.1);border-color:var(--gold2)}
+.tea-card-brand{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.brand-yogi{color:#6B3FA0}.brand-pukka{color:var(--green2)}.brand-english{color:var(--rose)}.brand-just{color:var(--gold)}.brand-organic{color:var(--green)}.brand-other{color:var(--brown2)}
+.tea-card-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--brown);margin-bottom:12px;line-height:1.3}
+.score-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(to right,var(--gold) var(--pct,50%),var(--cream2) var(--pct,50%));outline:none;cursor:pointer;margin-bottom:8px}
+.score-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid white;box-shadow:0 2px 6px rgba(200,146,42,.4);cursor:pointer;transition:transform .1s}
+.score-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.score-display{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.score-num{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--brown);line-height:1}
+.score-label{font-size:11px;color:var(--brown2);text-align:right;max-width:100px}
+.save-btn{width:100%;background:var(--brown);color:var(--cream);border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+.save-btn:hover{background:var(--brown2);transform:scale(1.01)}
+.save-btn.saved{background:var(--green2)}
+.my-score-badge{position:absolute;top:12px;right:12px;background:var(--gold);color:white;font-size:11px;font-weight:700;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif}
+
+/* OVERVIEW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:2rem}
+.stat-card{background:white;border:1.5px solid var(--cream2);border-radius:14px;padding:16px;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--brown);line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--brown2);text-transform:uppercase;letter-spacing:.08em}
+.leaderboard-section{background:white;border:1.5px solid var(--cream2);border-radius:18px;overflow:hidden;margin-bottom:2rem}
+.section-heading{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;padding:16px 20px;border-bottom:1px solid var(--cream2);display:flex;align-items:center;gap:8px}
+.lb-row{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--fog);gap:14px;animation:slideIn .3s ease both;transition:background .15s}
+.lb-row:hover{background:var(--fog)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;width:28px;text-align:center;flex-shrink:0}
+.rank-1{color:var(--gold)}.rank-2{color:#9E9E9E}.rank-3{color:#8B5E3C}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-brand{font-size:11px;color:var(--brown2);margin-top:1px}
+.lb-bar-wrap{width:100px;height:6px;background:var(--cream2);border-radius:3px;overflow:hidden;flex-shrink:0}
+.lb-bar{height:100%;background:linear-gradient(to right,var(--green3),var(--gold2));border-radius:3px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.lb-score{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;width:36px;text-align:right;flex-shrink:0}
+.lb-votes{font-size:11px;color:var(--brown2);width:40px;text-align:right;flex-shrink:0}
+.fun-section{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:2rem}
+.fun-card{background:white;border:1.5px solid var(--cream2);border-radius:18px;padding:16px 20px}
+.fun-card-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--brown2);margin-bottom:8px}
+.fun-card-value{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--brown);line-height:1.2;margin-bottom:4px}
+.fun-card-sub{font-size:12px;color:var(--brown2)}
+.brand-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.brand-label{font-size:12px;font-weight:500;width:110px;flex-shrink:0}
+.brand-bar-wrap{flex:1;height:8px;background:var(--cream2);border-radius:4px;overflow:hidden}
+.brand-bar{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.22,1,.36,1)}
+.brand-val{font-size:12px;font-weight:500;width:30px;text-align:right;flex-shrink:0}
+
+/* PROFILES */
+.profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.profile-card{background:white;border:1.5px solid var(--cream2);border-radius:18px;overflow:hidden;transition:all .2s}
+.profile-card:hover{box-shadow:0 6px 20px rgba(61,43,31,.1);border-color:var(--gold2)}
+.profile-top{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--fog)}
+.profile-avatar{width:44px;height:44px;border-radius:50%;background:var(--brown);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold2);flex-shrink:0}
+.profile-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+.profile-subtitle{font-size:11px;color:var(--brown2);margin-top:2px}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr 1fr;padding:12px 16px;border-bottom:1px solid var(--fog)}
+.profile-stat{text-align:center}
+.profile-stat-num{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700}
+.profile-stat-label{font-size:10px;color:var(--brown2);text-transform:uppercase;letter-spacing:.06em}
+.profile-fav{padding:12px 16px;font-size:12px;color:var(--brown2)}
+.profile-fav strong{color:var(--brown)}
+
+/* COMPARE */
+.compare-table{width:100%;border-collapse:collapse;font-size:13px}
+.compare-table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--brown2);font-weight:500;padding:8px 12px;text-align:left;border-bottom:1px solid var(--cream2)}
+.compare-table td{padding:10px 12px;border-bottom:1px solid var(--fog)}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:var(--fog)}
+.score-pill{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:11px;font-weight:700;font-family:'Playfair Display',serif}
+.score-pill.good{background:#e8f5e9;color:var(--green)}.score-pill.mid{background:#fff8e1;color:var(--gold)}.score-pill.low{background:#fce4ec;color:var(--rose)}.score-pill.none{background:var(--fog);color:var(--brown2);font-family:'DM Sans',sans-serif;font-size:10px}
+.score-0-3{color:var(--rose)}.score-4-6{color:var(--gold)}.score-7-10{color:var(--green2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--brown);color:var(--cream);padding:12px 24px;border-radius:30px;font-size:14px;font-weight:500;z-index:9998;transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 30px rgba(0,0,0,.2);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:3rem;color:var(--brown2)}
+.empty .empty-icon{font-size:48px;margin-bottom:1rem}
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9997;animation:confettiFall var(--dur) ease-in forwards}
+
+@media(max-width:600px){.main{padding:1rem}.topbar{padding:0 1rem}.nav-tabs{padding:0 1rem}}
+</style>
+</head>
+<body>
+
+<div class="leaf" style="--left:5%;--dur:18s;--delay:0s;--tx:80px;--rot:200deg">🍃</div>
+<div class="leaf" style="--left:15%;--dur:22s;--delay:3s;--tx:-40px;--rot:-150deg">🍂</div>
+<div class="leaf" style="--left:75%;--dur:20s;--delay:7s;--tx:60px;--rot:320deg">🍃</div>
+<div class="leaf" style="--left:88%;--dur:25s;--delay:12s;--tx:-70px;--rot:-200deg">🌿</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Brygger data...</div>
+</div>
+
+<div id="sync-indicator">
+  <div class="sync-spin"></div>
+  <span id="sync-text">Lagrar...</span>
+</div>
+
+<div id="login-screen" style="display:none">
+  <div class="login-art">
+    <div class="login-art-circle" style="width:600px;height:600px;top:-200px;left:-150px;"></div>
+    <div class="login-art-circle" style="width:400px;height:400px;bottom:-100px;right:-100px;"></div>
+  </div>
+  <div class="teacup-hero" style="position:relative">☕
+    <div class="steam-wrap"><div class="steam-line"></div><div class="steam-line"></div><div class="steam-line"></div></div>
+  </div>
+  <h1 class="login-title">Entro<br><span style="font-style:italic;color:var(--gold)">Smaksarkivet</span></h1>
+  <p class="login-sub">Bergen-kontoret · Tessommelieriet</p>
+  <div class="login-grid" id="login-grid"></div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">☕ <span>Smaks</span>arkivet</div>
+    <div class="topbar-right">
+      <div class="topbar-avatar" id="tb-avatar"></div>
+      <span class="topbar-name" id="tb-name"></span>
+      <button class="logout-btn" onclick="logout()">Bytt person</button>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('rate')" data-page="rate">🍵 Gi poeng</div>
+    <div class="nav-tab" onclick="showPage('overview')" data-page="overview">📊 Oversikt</div>
+    <div class="nav-tab" onclick="showPage('profiles')" data-page="profiles">👥 Profiler</div>
+    <div class="nav-tab" onclick="showPage('compare')" data-page="compare">⚔️ Samanlikn</div>
+  </div>
+  <div class="main">
+    <div class="page active" id="page-rate">
+      <div class="rate-header">
+        <div>
+          <div class="rate-title">Kva drikk du, <em id="rate-name-display"></em>?</div>
+          <div style="font-size:13px;color:var(--brown2);margin-top:4px">Gi kvar te ein karakter frå 0–10</div>
+        </div>
+        <div style="font-size:13px;color:var(--brown2);text-align:right">
+          <span id="rated-count">0</span> av <span id="total-count">0</span> vurdert
+        </div>
+      </div>
+      <div class="filter-bar">
+        <input class="search-input" id="search" placeholder="Søk etter te..." oninput="renderCards()">
+        <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+        <button class="filter-btn" onclick="setFilter('unrated',this)">Ikkje vurdert</button>
+        <button class="filter-btn" onclick="setFilter('rated',this)">Vurdert</button>
+        <button class="filter-btn" onclick="setFilter('Yogi Tea',this)">Yogi Tea</button>
+        <button class="filter-btn" onclick="setFilter('Pukka',this)">Pukka</button>
+      </div>
+      <div class="tea-cards" id="tea-cards"></div>
+    </div>
+    <div class="page" id="page-overview">
+      <div style="margin-bottom:1.5rem">
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.25rem">Kontorets smaksleksikon</h2>
+        <p style="font-size:13px;color:var(--brown2)">Basert på alle røyster frå teamet</p>
+      </div>
+      <div class="stats-row" id="stats-row"></div>
+      <div class="fun-section" id="fun-section"></div>
+      <div class="leaderboard-section">
+        <div class="section-heading">🏆 Te-topplista</div>
+        <div id="leaderboard"></div>
+      </div>
+      <div class="leaderboard-section" style="margin-bottom:2rem">
+        <div class="section-heading">📉 Bunnlista</div>
+        <div id="bottom-list"></div>
+      </div>
+      <div class="leaderboard-section">
+        <div class="section-heading">🏷️ Merke-snitt</div>
+        <div style="padding:16px 20px" id="brand-breakdown"></div>
+      </div>
+    </div>
+    <div class="page" id="page-profiles">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:1.5rem">Tessommelierar</h2>
+      <div class="profiles-grid" id="profiles-grid"></div>
+    </div>
+    <div class="page" id="page-compare">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.25rem">Samanlikn smak</h2>
+      <p style="font-size:13px;color:var(--brown2);margin-bottom:1.5rem">Sjå kvar de er einige — og ueinige</p>
+      <div style="margin-bottom:1rem;display:flex;gap:8px;flex-wrap:wrap" id="compare-people"></div>
+      <div id="compare-table-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BIN_ID = '6a0ad0ac250b1311c368ed68';
+const API_KEY = '$2a$10$TBh4PqrepirLxh3UkXQBD.LTn/64Ez0MaAGrwl9DvzH.7bFgfM4ta';
+
+const PEOPLE = ['Andreas','Gard','Gille','Kari','Knut','Laura','Morten'];
+const TEAS = [
+  {brand:'Yogi Tea',name:'Matcha Lemon'},{brand:'Yogi Tea',name:'Mental Clarity'},
+  {brand:'Yogi Tea',name:'Ginger Orange with Vanilla'},{brand:'Yogi Tea',name:'Mango Chai'},
+  {brand:'Yogi Tea',name:'Happy Nature'},{brand:'Yogi Tea',name:'Sweet Chai'},
+  {brand:'Yogi Tea',name:'Maca Chai'},{brand:'Yogi Tea',name:'Immune Support'},
+  {brand:'Yogi Tea',name:"Women's Energy"},{brand:'Yogi Tea',name:'Happy Farming'},
+  {brand:'Yogi Tea',name:'Licorice Mint'},{brand:'Yogi Tea',name:'Throat Comfort'},
+  {brand:'Yogi Tea',name:'Sweet Chili'},{brand:'Yogi Tea',name:"Women's Balance"},
+  {brand:'Yogi Tea',name:'Ginger Lemon'},{brand:'Yogi Tea',name:'Licorice'},
+  {brand:'Yogi Tea',name:'Star Salutation'},
+  {brand:'Pukka',name:'Night Time Apple Chai'},{brand:'Pukka',name:'Peppermint & Licorice'},
+  {brand:'Pukka',name:'Lemon, Ginger & Manuka Honey'},
+  {brand:'Pukka',name:'Chamomile, Vanilla & Manuka Honey'},{brand:'Pukka',name:'Vanilla Chai'},
+  {brand:'Organic India',name:'Tulsi Licorice Spice'},
+  {brand:'Organic India',name:'Tulsi Raspberry Peach'},
+  {brand:'Organic India',name:'Tulsi Pomegranate Green'},
+  {brand:'Just T',name:'Rhubarb Hygge'},{brand:'Just T',name:'Darling Peach'},
+  {brand:'English Tea Shop',name:'Intense Chai'},
+  {brand:'English Tea Shop',name:'Cold Brew Lemongrass & Citrus'},
+];
+const LABELS = ['😬 Nei takk','😕 Ikkje min smak','🤔 Kan gå','🙂 Greitt nok','😊 Ganske bra','👍 Bra!','🌟 Veldig bra','🔥 Topp!','😍 Elskar det','🏆 Perfekt','⭐ Guddommelig'];
+
+let currentUser = null, currentFilter = 'all', comparePeople = [], remoteData = {}, syncTimeout = null;
+
+async function fetchRemote() {
+  const r = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {headers:{'X-Master-Key':API_KEY}});
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return (await r.json()).record || {};
+}
+async function pushRemote(d) {
+  const r = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID, {method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:JSON.stringify(d)});
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+}
+function showSync(t) { document.getElementById('sync-text').textContent = t; document.getElementById('sync-indicator').classList.add('show'); }
+function hideSync() { setTimeout(() => document.getElementById('sync-indicator').classList.remove('show'), 1800); }
+function scheduleSave() {
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(async () => {
+    showSync('Lagrar...');
+    try { await pushRemote(remoteData); showSync('✓ Lagra'); }
+    catch(e) { showSync('⚠ Feil ved lagring'); }
+    hideSync();
+  }, 900);
+}
+
+function showLoading(t) { document.getElementById('loading-text').textContent = t; document.getElementById('loading').style.display = 'flex'; }
+function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+window.addEventListener('load', async () => {
+  showLoading('Brygger data...');
+  try {
+    remoteData = await fetchRemote();
+    hideLoading();
+    buildLogin();
+    document.getElementById('login-screen').style.display = 'flex';
+  } catch(e) {
+    hideLoading();
+    alert('Klarte ikkje koble til JSONBin: ' + e.message);
+  }
+});
+
+const tk = t => t.brand + '::' + t.name;
+const ini = n => n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+function bc(b) { if(b==='Yogi Tea') return 'brand-yogi'; if(b==='Pukka') return 'brand-pukka'; if(b==='English Tea Shop') return 'brand-english'; if(b==='Just T') return 'brand-just'; if(b==='Organic India') return 'brand-organic'; return 'brand-other'; }
+const avg = a => a.length ? a.reduce((x,y) => x+y, 0) / a.length : null;
+const sc = s => s >= 7 ? 'score-7-10' : s >= 4 ? 'score-4-6' : 'score-0-3';
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+function confetti() {
+  const c = ['#C8922A','#4A7C2B','#6B3FA0','#C4614A','#E8B84B'];
+  for(let i = 0; i < 28; i++) {
+    const e = document.createElement('div');
+    e.className = 'confetti-piece';
+    e.style.cssText = 'left:' + (Math.random()*100) + 'vw;top:' + (Math.random()*40) + 'vh;background:' + c[~~(Math.random()*c.length)] + ';--dur:' + (1+Math.random()*2) + 's;animation-delay:' + (Math.random()*.5) + 's';
+    document.body.appendChild(e);
+    setTimeout(() => e.remove(), 3000);
+  }
+}
+
+function buildLogin() {
+  document.getElementById('login-grid').innerHTML = PEOPLE.map(n => {
+    const r = remoteData[n] || {}, c = Object.keys(r).length, v = Object.values(r);
+    const a = v.length ? (v.reduce((x,y) => x+y, 0) / v.length).toFixed(1) : '—';
+    return '<div class="login-person" onclick="login(\'' + n + '\')">' +
+      '<div class="login-avatar">' + ini(n) + '</div>' +
+      '<div class="login-person-name">' + n + '</div>' +
+      '<div class="login-person-cups">' + (c > 0 ? c + ' vurdering' + (c!==1?'ar':'') + ' · snitt ' + a : '') + '&nbsp;</div>' +
+      '</div>';
+  }).join('');
+}
+
+function login(n) {
+  currentUser = n;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('tb-avatar').textContent = ini(n);
+  document.getElementById('tb-name').textContent = n;
+  document.getElementById('rate-name-display').textContent = n;
+  renderCards();
+  showPage('rate');
+}
+
+async function logout() {
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  showLoading('Hentar siste data...');
+  try { remoteData = await fetchRemote(); } catch(e) {}
+  hideLoading();
+  buildLogin();
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector('[data-page="' + id + '"]').classList.add('active');
+  if(id === 'overview') renderOverview();
+  if(id === 'profiles') renderProfiles();
+  if(id === 'compare') renderCompare();
+}
+
+function setFilter(f, b) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  renderCards();
+}
+
+function renderCards() {
+  const my = remoteData[currentUser] || {}, s = document.getElementById('search').value.toLowerCase();
+  const teas = TEAS.filter(t => {
+    const k = tk(t), ok = (t.name + t.brand).toLowerCase().includes(s);
+    if(!ok) return false;
+    if(currentFilter === 'unrated') return !(k in my);
+    if(currentFilter === 'rated') return k in my;
+    if(currentFilter !== 'all') return t.brand === currentFilter;
+    return true;
+  });
+  document.getElementById('rated-count').textContent = Object.keys(my).length;
+  document.getElementById('total-count').textContent = TEAS.length;
+  const cont = document.getElementById('tea-cards');
+  if(!teas.length) { cont.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🍵</div><p>Ingen te funne</p></div>'; return; }
+  cont.innerHTML = teas.map((t, i) => {
+    const k = tk(t), score = my[k], has = score !== undefined, pct = has ? score/10*100 : 50, id = k.replace(/[^a-z0-9]/gi,'_');
+    return '<div class="tea-card" style="animation-delay:' + (i*.03) + 's">' +
+      (has ? '<div class="my-score-badge">' + score + '</div>' : '') +
+      '<div class="tea-card-brand ' + bc(t.brand) + '">' + t.brand + '</div>' +
+      '<div class="tea-card-name">' + t.name + '</div>' +
+      '<input type="range" min="0" max="10" step="1" value="' + (has?score:5) + '" class="score-slider" style="--pct:' + pct + '%" id="sl-' + id + '" oninput="upd(this,\'' + k + '\')">' +
+      '<div class="score-display">' +
+        '<div class="score-num" id="n-' + id + '">' + (has?score:5) + '</div>' +
+        '<div class="score-label" id="l-' + id + '">' + LABELS[has?score:5] + '</div>' +
+      '</div>' +
+      '<button class="save-btn' + (has?' saved':'') + '" onclick="saveScore(\'' + k + '\',this)">' + (has?'✓ Lagra':'Lagre vurdering') + '</button>' +
+      '</div>';
+  }).join('');
+}
+
+function upd(el, k) {
+  const v = +el.value, id = k.replace(/[^a-z0-9]/gi,'_');
+  document.getElementById('n-' + id).textContent = v;
+  document.getElementById('l-' + id).textContent = LABELS[v];
+  el.style.setProperty('--pct', (v/10*100) + '%');
+}
+
+function saveScore(k, btn) {
+  const id = k.replace(/[^a-z0-9]/gi,'_'), v = +document.getElementById('sl-' + id).value;
+  if(!remoteData[currentUser]) remoteData[currentUser] = {};
+  const wasNew = !(k in remoteData[currentUser]);
+  remoteData[currentUser][k] = v;
+  btn.textContent = '✓ Lagra'; btn.classList.add('saved');
+  const card = btn.closest('.tea-card');
+  let badge = card.querySelector('.my-score-badge');
+  if(!badge) { badge = document.createElement('div'); badge.className = 'my-score-badge'; card.insertBefore(badge, card.firstChild); }
+  badge.textContent = v;
+  toast(LABELS[v] + ' — ' + (TEAS.find(t => tk(t) === k) || {}).name);
+  if(v >= 9 && wasNew) confetti();
+  document.getElementById('rated-count').textContent = Object.keys(remoteData[currentUser]).length;
+  scheduleSave();
+}
+
+function renderOverview() {
+  const ts = TEAS.map(t => { const k = tk(t), scores = PEOPLE.map(p => remoteData[p] && remoteData[p][k]).filter(v => v !== undefined); return {t, scores, avg: avg(scores), count: scores.length}; });
+  const total = ts.reduce((a,b) => a + b.count, 0), rated = ts.filter(x => x.count > 0);
+  const ga = rated.length ? avg(rated.map(x => x.avg)) : 0;
+  const mv = ts.reduce((a,b) => b.count > a.count ? b : a, {count:0});
+  const mr = PEOPLE.reduce((a,b) => Object.keys(remoteData[b]||{}).length > Object.keys(remoteData[a]||{}).length ? b : a);
+  document.getElementById('stats-row').innerHTML = [
+    {num:total, lbl:'Totale røyster'},{num:rated.length, lbl:'Te-sortar vurdert'},
+    {num:ga ? ga.toFixed(1) : '—', lbl:'Snittkarakter'},{num:PEOPLE.length, lbl:'Tessommelierar'}
+  ].map(s => '<div class="stat-card"><div class="stat-num">' + s.num + '</div><div class="stat-label">' + s.lbl + '</div></div>').join('');
+  const mc = ts.filter(x => x.count >= 2).map(x => { const m = x.scores.reduce((a,b) => a+b,0)/x.scores.length; return {...x, vari: x.scores.reduce((a,b) => a+(b-m)**2,0)/x.scores.length}; }).sort((a,b) => b.vari - a.vari)[0];
+  const top1 = ts.filter(x => x.avg !== null).sort((a,b) => b.avg - a.avg)[0];
+  const bot1 = ts.filter(x => x.avg !== null).sort((a,b) => a.avg - b.avg)[0];
+  document.getElementById('fun-section').innerHTML = [
+    top1 ? {t:'☕ Kontorets favoritt', v:top1.t.name, s:top1.t.brand + ' · ' + top1.avg.toFixed(1) + '/10'} : null,
+    bot1 && bot1.avg < 5 ? {t:'😅 Minst populær', v:bot1.t.name, s:bot1.t.brand + ' · ' + bot1.avg.toFixed(1) + '/10'} : null,
+    mc ? {t:'🤔 Mest omstridd', v:mc.t.name, s:'Stor usemje i teamet'} : null,
+    mv.count > 0 ? {t:'🏷️ Mest vurdert', v:mv.t.name, s:mv.count + ' røyster'} : null,
+    {t:'🍵 Ivrigaste sommelier', v:mr, s:Object.keys(remoteData[mr]||{}).length + ' vurderingar'},
+  ].filter(Boolean).map(f => '<div class="fun-card"><div class="fun-card-title">' + f.t + '</div><div class="fun-card-value">' + f.v + '</div><div class="fun-card-sub">' + f.s + '</div></div>').join('');
+  const sorted = ts.filter(x => x.avg !== null).sort((a,b) => b.avg - a.avg);
+  document.getElementById('leaderboard').innerHTML = sorted.slice(0,10).map((x,i) =>
+    '<div class="lb-row" style="animation-delay:' + (i*.05) + 's">' +
+    '<div class="lb-rank rank-' + (i+1) + '">' + (i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1) + '</div>' +
+    '<div class="lb-info"><div class="lb-name">' + x.t.name + '</div><div class="lb-brand ' + bc(x.t.brand) + '">' + x.t.brand + '</div></div>' +
+    '<div class="lb-bar-wrap"><div class="lb-bar" style="width:' + (x.avg/10*100) + '%"></div></div>' +
+    '<div class="lb-score ' + sc(x.avg) + '">' + x.avg.toFixed(1) + '</div>' +
+    '<div class="lb-votes">' + x.count + ' 🗳️</div></div>'
+  ).join('') || '<div class="empty"><div class="empty-icon">🌿</div><p>Ingen vurderingar endå</p></div>';
+  document.getElementById('bottom-list').innerHTML = sorted.slice(-5).reverse().map((x,i) =>
+    '<div class="lb-row"><div class="lb-rank" style="color:var(--rose)">' + (i+1) + '</div>' +
+    '<div class="lb-info"><div class="lb-name">' + x.t.name + '</div><div class="lb-brand ' + bc(x.t.brand) + '">' + x.t.brand + '</div></div>' +
+    '<div class="lb-bar-wrap"><div class="lb-bar" style="width:' + (x.avg/10*100) + '%;background:linear-gradient(to right,var(--rose),var(--gold2))"></div></div>' +
+    '<div class="lb-score" style="color:var(--rose)">' + x.avg.toFixed(1) + '</div>' +
+    '<div class="lb-votes">' + x.count + ' 🗳️</div></div>'
+  ).join('') || '<div class="empty"><p>Ikkje nok data</p></div>';
+  const brands = [...new Set(TEAS.map(t => t.brand))];
+  const bA = brands.map(b => { const scores = TEAS.filter(t => t.brand===b).flatMap(t => PEOPLE.map(p => remoteData[p] && remoteData[p][tk(t)]).filter(v => v !== undefined)); return {b, a: avg(scores)}; }).filter(x => x.a !== null).sort((a,b) => b.a - a.a);
+  const mx = Math.max(...bA.map(x => x.a), 1);
+  const bC = {'Yogi Tea':'#6B3FA0','Pukka':'#4A7C2B','English Tea Shop':'#C4614A','Just T':'#C8922A','Organic India':'#2D5016'};
+  document.getElementById('brand-breakdown').innerHTML = bA.map(x =>
+    '<div class="brand-row"><div class="brand-label" style="color:' + (bC[x.b]||'var(--brown)') + '">' + x.b + '</div>' +
+    '<div class="brand-bar-wrap"><div class="brand-bar" style="width:' + (x.a/mx*100) + '%;background:' + (bC[x.b]||'var(--brown)') + '33;border:1px solid ' + (bC[x.b]||'var(--brown)') + '"></div></div>' +
+    '<div class="brand-val">' + x.a.toFixed(1) + '</div></div>'
+  ).join('');
+}
+
+function renderProfiles() {
+  document.getElementById('profiles-grid').innerHTML = PEOPLE.map(n => {
+    const r = remoteData[n] || {}, s = Object.values(r), c = s.length, a = c ? s.reduce((x,y) => x+y,0)/c : 0;
+    const t1 = c ? Object.entries(r).sort((a,b) => b[1]-a[1])[0] : null;
+    const fav = t1 ? TEAS.find(t => tk(t) === t1[0]) : null;
+    const hi = s.length ? Math.max(...s) : '—';
+    return '<div class="profile-card">' +
+      '<div class="profile-top"><div class="profile-avatar">' + ini(n) + '</div>' +
+      '<div><div class="profile-name">' + n + '</div><div class="profile-subtitle">' + c + ' vurdering' + (c!==1?'ar':'') + (c?' · snitt ' + a.toFixed(1):'') + '</div></div></div>' +
+      '<div class="profile-stats">' +
+        '<div class="profile-stat"><div class="profile-stat-num">' + c + '</div><div class="profile-stat-label">Vurdert</div></div>' +
+        '<div class="profile-stat"><div class="profile-stat-num ' + (typeof hi==='number'?sc(hi):'') + '">' + hi + '</div><div class="profile-stat-label">Høgast</div></div>' +
+        '<div class="profile-stat"><div class="profile-stat-num">' + (c?a.toFixed(1):'—') + '</div><div class="profile-stat-label">Snitt</div></div>' +
+      '</div>' +
+      '<div class="profile-fav">' + (fav ? '🏆 Favoritt: <strong>' + fav.name + '</strong> <span style="font-weight:700;color:var(--gold)">(' + t1[1] + '/10)</span>' : '<em style="color:var(--brown2)">Ingen vurderingar endå</em>') + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function renderCompare() {
+  document.getElementById('compare-people').innerHTML = PEOPLE.map(p =>
+    '<button class="filter-btn' + (comparePeople.includes(p)?' active':'') + '" onclick="toggleCmp(\'' + p + '\',this)">' + p + '</button>'
+  ).join('');
+  renderCmpTable();
+}
+
+function toggleCmp(n, b) {
+  comparePeople.includes(n) ? comparePeople.splice(comparePeople.indexOf(n),1) : comparePeople.push(n);
+  b.classList.toggle('active');
+  renderCmpTable();
+}
+
+function renderCmpTable() {
+  const ppl = comparePeople.length ? comparePeople : PEOPLE.slice(0,3);
+  const rows = TEAS.map(t => { const k = tk(t), scores = ppl.map(p => remoteData[p] && remoteData[p][k]); return {t, scores, any: scores.some(s => s !== undefined)}; }).filter(x => x.any);
+  const w = document.getElementById('compare-table-wrap');
+  if(!rows.length) { w.innerHTML = '<div class="empty"><div class="empty-icon">🫖</div><p>Vel personar og gi vurderingar for å samanlikne</p></div>'; return; }
+  const pill = s => s === undefined ? '<span class="score-pill none">—</span>' : '<span class="score-pill ' + (s>=7?'good':s>=4?'mid':'low') + '">' + s + '</span>';
+  w.innerHTML = '<div style="overflow-x:auto"><table class="compare-table"><thead><tr><th>Te</th>' + ppl.map(p => '<th>' + p + '</th>').join('') + '<th>Diff</th></tr></thead><tbody>' +
+    rows.map(({t, scores}) => {
+      const d = scores.filter(s => s !== undefined);
+      const diff = d.length >= 2 ? Math.max(...d) - Math.min(...d) : '—';
+      return '<tr style="' + (typeof diff==='number'&&diff>=5?'background:#fff8f6':'') + '">' +
+        '<td><div style="font-weight:500;font-size:13px">' + t.name + '</div><div class="lb-brand ' + bc(t.brand) + '">' + t.brand + '</div></td>' +
+        scores.map(s => '<td style="text-align:center">' + pill(s) + '</td>').join('') +
+        '<td style="text-align:center;font-weight:500;color:' + (typeof diff==='number'&&diff>=5?'var(--rose)':'var(--brown2)') + '">' + diff + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+</script>
+</body>
+</html>
