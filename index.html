@@ -22,6 +22,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 @keyframes leafDrift{0%{transform:translateX(0) translateY(0) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateX(var(--tx)) translateY(-100vh) rotate(var(--rot));opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@keyframes popIn{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
 .leaf{position:fixed;pointer-events:none;z-index:1;font-size:18px;animation:leafDrift var(--dur) linear infinite;animation-delay:var(--delay);bottom:-20px;left:var(--left)}
 
 /* LOADING */
@@ -42,15 +43,36 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .steam-wrap{position:absolute;top:-40px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
 .steam-line{width:3px;height:28px;background:linear-gradient(to top,var(--gold),transparent);border-radius:2px;animation:steam 2.5s ease-in-out infinite}
 .steam-line:nth-child(2){animation-delay:.4s}.steam-line:nth-child(3){animation-delay:.8s}
-.login-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,3.5rem);font-weight:700;color:var(--brown);text-align:center;line-height:1.1;position:relative;z-index:2}
-.login-sub{font-size:14px;color:var(--brown2);letter-spacing:.12em;text-transform:uppercase;margin-top:8px;margin-bottom:2.5rem;position:relative;z-index:2}
-.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;max-width:640px;width:100%;position:relative;z-index:2}
-.login-person{background:white;border:1.5px solid var(--cream2);border-radius:16px;padding:20px 12px;cursor:pointer;text-align:center;transition:all .2s cubic-bezier(.34,1.56,.64,1)}
-.login-person:hover{transform:translateY(-4px) scale(1.03);border-color:var(--gold);box-shadow:0 8px 30px rgba(61,43,31,.12)}
-.login-avatar{width:52px;height:52px;border-radius:50%;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);margin:0 auto 10px;transition:all .2s}
-.login-person:hover .login-avatar{background:var(--gold2);color:white}
-.login-person-name{font-size:14px;font-weight:500;color:var(--brown)}
-.login-person-cups{font-size:11px;color:var(--brown2);margin-top:3px}
+.login-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.2rem);font-weight:700;color:var(--brown);text-align:center;line-height:1.1;position:relative;z-index:2}
+.login-instruction{font-size:15px;color:var(--brown2);margin-top:12px;margin-bottom:2rem;position:relative;z-index:2;text-align:center;max-width:400px;line-height:1.6}
+.login-instruction strong{color:var(--brown)}
+.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;max-width:680px;width:100%;position:relative;z-index:2}
+.login-person{background:white;border:2px solid var(--cream2);border-radius:18px;padding:22px 14px 18px;cursor:pointer;text-align:center;transition:all .2s cubic-bezier(.34,1.56,.64,1);position:relative}
+.login-person:hover{transform:translateY(-5px) scale(1.04);border-color:var(--gold);box-shadow:0 12px 35px rgba(61,43,31,.14)}
+.login-person:active{transform:scale(.97)}
+.login-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--cream2),var(--cream));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown);margin:0 auto 10px;transition:all .2s;border:2px solid var(--cream2)}
+.login-person:hover .login-avatar{background:linear-gradient(135deg,var(--gold),var(--gold2));color:white;border-color:var(--gold)}
+.login-person-name{font-size:15px;font-weight:600;color:var(--brown);margin-bottom:4px}
+.login-person-stats{font-size:11px;color:var(--brown2);line-height:1.5}
+.login-person-stats .hi{color:var(--green2);font-weight:600}
+.login-arrow{position:absolute;bottom:10px;right:12px;font-size:16px;opacity:0;transition:opacity .15s,transform .15s;transform:translateX(-4px)}
+.login-person:hover .login-arrow{opacity:1;transform:translateX(0)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(61,43,31,.5);z-index:5000;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.modal{background:var(--cream);border-radius:20px;padding:2rem;max-width:500px;width:100%;animation:popIn .2s ease;max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:.5rem}
+.modal-sub{font-size:13px;color:var(--brown2);margin-bottom:1.5rem}
+.modal-label{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--brown2);margin-bottom:6px;display:block;margin-top:1rem}
+.modal-input{width:100%;background:white;border:1.5px solid var(--cream2);color:var(--brown);font-size:14px;padding:10px 14px;border-radius:10px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.modal-input:focus{border-color:var(--gold)}
+.modal-row{display:flex;gap:10px;margin-top:1.5rem}
+.modal-btn{flex:1;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+.modal-btn.primary{background:var(--brown);color:var(--cream)}
+.modal-btn.primary:hover{background:var(--brown2)}
+.modal-btn.secondary{background:var(--cream2);color:var(--brown)}
+.modal-btn.secondary:hover{background:var(--cream)}
+select.modal-input{cursor:pointer}
 
 /* APP */
 #app{display:none;min-height:100vh}
@@ -79,11 +101,15 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .filter-btn:hover,.filter-btn.active{background:var(--brown);border-color:var(--brown);color:var(--cream)}
 .search-input{flex:1;min-width:200px;background:white;border:1.5px solid var(--cream2);color:var(--brown);font-size:13px;padding:7px 14px 7px 36px;border-radius:20px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235C3D2E' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
 .search-input:focus{border-color:var(--gold)}
+.add-tea-btn{background:var(--gold);border:none;color:white;font-size:13px;font-weight:500;padding:7px 16px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:flex;align-items:center;gap:6px}
+.add-tea-btn:hover{background:var(--brown);transform:scale(1.03)}
 .tea-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .tea-card{background:white;border:1.5px solid var(--cream2);border-radius:16px;padding:16px;transition:all .2s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;animation:fadeIn .3s ease both}
 .tea-card:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(61,43,31,.1);border-color:var(--gold2)}
-.tea-card-brand{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.tea-card-brand{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;display:flex;align-items:center;justify-content:space-between}
 .brand-yogi{color:#6B3FA0}.brand-pukka{color:var(--green2)}.brand-english{color:var(--rose)}.brand-just{color:var(--gold)}.brand-organic{color:var(--green)}.brand-other{color:var(--brown2)}
+.tea-link{font-size:11px;color:var(--gold);text-decoration:none;font-weight:500;transition:opacity .15s}
+.tea-link:hover{opacity:1}
 .tea-card-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--brown);margin-bottom:12px;line-height:1.3}
 .score-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(to right,var(--gold) var(--pct,50%),var(--cream2) var(--pct,50%));outline:none;cursor:pointer;margin-bottom:8px}
 .score-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid white;box-shadow:0 2px 6px rgba(200,146,42,.4);cursor:pointer;transition:transform .1s}
@@ -180,6 +206,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <span id="sync-text">Lagrar...</span>
 </div>
 
+<!-- LOGIN SCREEN -->
 <div id="login-screen" style="display:none">
   <div class="login-art">
     <div class="login-art-circle" style="width:600px;height:600px;top:-200px;left:-150px;"></div>
@@ -189,17 +216,43 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="steam-wrap"><div class="steam-line"></div><div class="steam-line"></div><div class="steam-line"></div></div>
   </div>
   <h1 class="login-title">Entro<br><span style="font-style:italic;color:var(--gold)">Smaksarkivet</span></h1>
-  <p class="login-sub">Bergen-kontoret · Tessommelieriet</p>
+  <p class="login-instruction">Logg inn for å gi te-vurderingar og sjå kva kollegaene dine likar best.</p>
   <div class="login-grid" id="login-grid"></div>
 </div>
 
+<!-- ADD TEA MODAL -->
+<div class="modal-overlay" id="add-tea-modal" style="display:none" onclick="closeAddTeaModal(event)">
+  <div class="modal">
+    <div class="modal-title">➕ Legg til ny te</div>
+    <div class="modal-sub">Fann ein te i skuffen som ikkje er i lista? Legg han til her!</div>
+    <label class="modal-label">Merke</label>
+    <select class="modal-input" id="new-brand">
+      <option value="Yogi Tea">Yogi Tea</option>
+      <option value="Pukka">Pukka</option>
+      <option value="Organic India">Organic India</option>
+      <option value="Just T">Just T</option>
+      <option value="English Tea Shop">English Tea Shop</option>
+      <option value="Anna">Anna</option>
+    </select>
+    <label class="modal-label">Namn på teen</label>
+    <input class="modal-input" id="new-name" placeholder="t.d. Chamomile Dream" />
+    <label class="modal-label">Lenke (valfritt)</label>
+    <input class="modal-input" id="new-url" placeholder="t.d. https://yogitea.com/..." type="url" />
+    <div class="modal-row">
+      <button class="modal-btn secondary" onclick="closeAddTeaModal()">Avbryt</button>
+      <button class="modal-btn primary" onclick="addTea()">Legg til ☕</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-logo">☕ <span>Smaks</span>arkivet</div>
     <div class="topbar-right">
       <div class="topbar-avatar" id="tb-avatar"></div>
       <span class="topbar-name" id="tb-name"></span>
-      <button class="logout-btn" onclick="logout()">Bytt person</button>
+      <button class="logout-btn" onclick="logout()">Bytt brukar</button>
     </div>
   </div>
   <div class="nav-tabs">
@@ -209,6 +262,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="nav-tab" onclick="showPage('compare')" data-page="compare">⚔️ Samanlikn</div>
   </div>
   <div class="main">
+
+    <!-- RATE PAGE -->
     <div class="page active" id="page-rate">
       <div class="rate-header">
         <div>
@@ -226,9 +281,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         <button class="filter-btn" onclick="setFilter('rated',this)">Vurdert</button>
         <button class="filter-btn" onclick="setFilter('Yogi Tea',this)">Yogi Tea</button>
         <button class="filter-btn" onclick="setFilter('Pukka',this)">Pukka</button>
+        <button class="add-tea-btn" onclick="openAddTeaModal()">+ Legg til te</button>
       </div>
       <div class="tea-cards" id="tea-cards"></div>
     </div>
+
+    <!-- OVERVIEW PAGE -->
     <div class="page" id="page-overview">
       <div style="margin-bottom:1.5rem">
         <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.25rem">Kontorets smaksleksikon</h2>
@@ -249,16 +307,21 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         <div style="padding:16px 20px" id="brand-breakdown"></div>
       </div>
     </div>
+
+    <!-- PROFILES PAGE -->
     <div class="page" id="page-profiles">
-      <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:1.5rem">Tessommelierar</h2>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:1.5rem">Teamet</h2>
       <div class="profiles-grid" id="profiles-grid"></div>
     </div>
+
+    <!-- COMPARE PAGE -->
     <div class="page" id="page-compare">
       <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.25rem">Samanlikn smak</h2>
       <p style="font-size:13px;color:var(--brown2);margin-bottom:1.5rem">Sjå kvar de er einige — og ueinige</p>
       <div style="margin-bottom:1rem;display:flex;gap:8px;flex-wrap:wrap" id="compare-people"></div>
       <div id="compare-table-wrap"></div>
     </div>
+
   </div>
 </div>
 
@@ -267,30 +330,50 @@ const BIN_ID = '6a0ad0ac250b1311c368ed68';
 const API_KEY = '$2a$10$TBh4PqrepirLxh3UkXQBD.LTn/64Ez0MaAGrwl9DvzH.7bFgfM4ta';
 
 const PEOPLE = ['Andreas','Gard','Gille','Kari','Knut','Laura','Morten'];
-const TEAS = [
-  {brand:'Yogi Tea',name:'Matcha Lemon'},{brand:'Yogi Tea',name:'Mental Clarity'},
-  {brand:'Yogi Tea',name:'Ginger Orange with Vanilla'},{brand:'Yogi Tea',name:'Mango Chai'},
-  {brand:'Yogi Tea',name:'Happy Nature'},{brand:'Yogi Tea',name:'Sweet Chai'},
-  {brand:'Yogi Tea',name:'Maca Chai'},{brand:'Yogi Tea',name:'Immune Support'},
-  {brand:'Yogi Tea',name:"Women's Energy"},{brand:'Yogi Tea',name:'Happy Farming'},
-  {brand:'Yogi Tea',name:'Licorice Mint'},{brand:'Yogi Tea',name:'Throat Comfort'},
-  {brand:'Yogi Tea',name:'Sweet Chili'},{brand:'Yogi Tea',name:"Women's Balance"},
-  {brand:'Yogi Tea',name:'Ginger Lemon'},{brand:'Yogi Tea',name:'Licorice'},
-  {brand:'Yogi Tea',name:'Star Salutation'},
-  {brand:'Pukka',name:'Night Time Apple Chai'},{brand:'Pukka',name:'Peppermint & Licorice'},
-  {brand:'Pukka',name:'Lemon, Ginger & Manuka Honey'},
-  {brand:'Pukka',name:'Chamomile, Vanilla & Manuka Honey'},{brand:'Pukka',name:'Vanilla Chai'},
-  {brand:'Organic India',name:'Tulsi Licorice Spice'},
-  {brand:'Organic India',name:'Tulsi Raspberry Peach'},
-  {brand:'Organic India',name:'Tulsi Pomegranate Green'},
-  {brand:'Just T',name:'Rhubarb Hygge'},{brand:'Just T',name:'Darling Peach'},
-  {brand:'English Tea Shop',name:'Intense Chai'},
-  {brand:'English Tea Shop',name:'Cold Brew Lemongrass & Citrus'},
+
+const DEFAULT_TEAS = [
+  {brand:'Yogi Tea',name:'Matcha Lemon',url:'https://www.yogitea.com/en/teas/green-teas/matcha-lemon/'},
+  {brand:'Yogi Tea',name:'Mental Clarity',url:'https://www.yogitea.com/en/teas/herbal-teas/mental-clarity/'},
+  {brand:'Yogi Tea',name:'Ginger Orange with Vanilla',url:'https://www.yogitea.com/en/teas/herbal-teas/ginger-orange/'},
+  {brand:'Yogi Tea',name:'Mango Chai',url:'https://www.yogitea.com/en/teas/herbal-teas/mango-chai/'},
+  {brand:'Yogi Tea',name:'Happy Nature',url:'https://www.yogitea.com/en/'},
+  {brand:'Yogi Tea',name:'Sweet Chai',url:'https://www.yogitea.com/en/teas/herbal-teas/sweet-chai/'},
+  {brand:'Yogi Tea',name:'Maca Chai',url:'https://www.yogitea.com/en/teas/herbal-teas/maca-chai/'},
+  {brand:'Yogi Tea',name:'Immune Support',url:'https://www.yogitea.com/en/teas/herbal-teas/immune-support/'},
+  {brand:'Yogi Tea',name:"Women's Energy",url:'https://www.yogitea.com/en/teas/herbal-teas/womens-energy/'},
+  {brand:'Yogi Tea',name:'Happy Farming',url:'https://www.yogitea.com/en/'},
+  {brand:'Yogi Tea',name:'Licorice Mint',url:'https://www.yogitea.com/en/teas/herbal-teas/licorice-mint/'},
+  {brand:'Yogi Tea',name:'Throat Comfort',url:'https://www.yogitea.com/en/teas/herbal-teas/throat-comfort/'},
+  {brand:'Yogi Tea',name:'Sweet Chili',url:'https://www.yogitea.com/en/teas/herbal-teas/sweet-chili/'},
+  {brand:'Yogi Tea',name:"Women's Balance",url:'https://www.yogitea.com/en/teas/herbal-teas/womens-balance/'},
+  {brand:'Yogi Tea',name:'Ginger Lemon',url:'https://www.yogitea.com/en/teas/herbal-teas/ginger-lemon/'},
+  {brand:'Yogi Tea',name:'Licorice',url:'https://www.yogitea.com/en/teas/herbal-teas/licorice/'},
+  {brand:'Yogi Tea',name:'Star Salutation',url:'https://www.yogitea.com/en/'},
+  {brand:'Pukka',name:'Night Time Apple Chai',url:'https://www.pukkaherbs.com/en/night-time-apple-chai'},
+  {brand:'Pukka',name:'Peppermint & Licorice',url:'https://www.pukkaherbs.com/en/peppermint-licorice'},
+  {brand:'Pukka',name:'Lemon, Ginger & Manuka Honey',url:'https://www.pukkaherbs.com/en/lemon-ginger-manuka-honey'},
+  {brand:'Pukka',name:'Chamomile, Vanilla & Manuka Honey',url:'https://www.pukkaherbs.com/en/chamomile-vanilla-manuka-honey'},
+  {brand:'Pukka',name:'Vanilla Chai',url:'https://www.pukkaherbs.com/en/vanilla-chai'},
+  {brand:'Organic India',name:'Tulsi Licorice Spice',url:'https://organicindia.com/'},
+  {brand:'Organic India',name:'Tulsi Raspberry Peach',url:'https://organicindia.com/'},
+  {brand:'Organic India',name:'Tulsi Pomegranate Green',url:'https://organicindia.com/'},
+  {brand:'Just T',name:'Rhubarb Hygge',url:'https://justtea.com/'},
+  {brand:'Just T',name:'Darling Peach',url:'https://justtea.com/'},
+  {brand:'English Tea Shop',name:'Intense Chai',url:'https://www.englishteashop.com/'},
+  {brand:'English Tea Shop',name:'Cold Brew Lemongrass & Citrus',url:'https://www.englishteashop.com/'},
 ];
+
 const LABELS = ['😬 Nei takk','😕 Ikkje min smak','🤔 Kan gå','🙂 Greitt nok','😊 Ganske bra','👍 Bra!','🌟 Veldig bra','🔥 Topp!','😍 Elskar det','🏆 Perfekt','⭐ Guddommelig'];
 
 let currentUser = null, currentFilter = 'all', comparePeople = [], remoteData = {}, syncTimeout = null;
 
+// TEAS is live — merges defaults with any custom teas stored remotely
+function getTeas() {
+  const custom = remoteData._customTeas || [];
+  return [...DEFAULT_TEAS, ...custom];
+}
+
+// ── JSONBin ───────────────────────────────────────────────────────────────────
 async function fetchRemote() {
   const r = await fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest', {headers:{'X-Master-Key':API_KEY}});
   if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -328,9 +411,17 @@ window.addEventListener('load', async () => {
   }
 });
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
 const tk = t => t.brand + '::' + t.name;
 const ini = n => n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-function bc(b) { if(b==='Yogi Tea') return 'brand-yogi'; if(b==='Pukka') return 'brand-pukka'; if(b==='English Tea Shop') return 'brand-english'; if(b==='Just T') return 'brand-just'; if(b==='Organic India') return 'brand-organic'; return 'brand-other'; }
+function bc(b) {
+  if(b==='Yogi Tea') return 'brand-yogi';
+  if(b==='Pukka') return 'brand-pukka';
+  if(b==='English Tea Shop') return 'brand-english';
+  if(b==='Just T') return 'brand-just';
+  if(b==='Organic India') return 'brand-organic';
+  return 'brand-other';
+}
 const avg = a => a.length ? a.reduce((x,y) => x+y, 0) / a.length : null;
 const sc = s => s >= 7 ? 'score-7-10' : s >= 4 ? 'score-4-6' : 'score-0-3';
 function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
@@ -345,14 +436,25 @@ function confetti() {
   }
 }
 
+// ── Login ─────────────────────────────────────────────────────────────────────
 function buildLogin() {
   document.getElementById('login-grid').innerHTML = PEOPLE.map(n => {
-    const r = remoteData[n] || {}, c = Object.keys(r).length, v = Object.values(r);
-    const a = v.length ? (v.reduce((x,y) => x+y, 0) / v.length).toFixed(1) : '—';
+    const r = remoteData[n] || {}, scores = Object.values(r).filter(v => typeof v === 'number');
+    const count = scores.length;
+    const favEntry = count ? Object.entries(r).filter(([,v])=>typeof v==='number').sort((a,b) => b[1]-a[1])[0] : null;
+    const favTea = favEntry ? getTeas().find(t => tk(t) === favEntry[0]) : null;
+    const avgVal = count ? (scores.reduce((a,b)=>a+b,0)/count).toFixed(1) : null;
+
     return '<div class="login-person" onclick="login(\'' + n + '\')">' +
       '<div class="login-avatar">' + ini(n) + '</div>' +
       '<div class="login-person-name">' + n + '</div>' +
-      '<div class="login-person-cups">' + (c > 0 ? c + ' vurdering' + (c!==1?'ar':'') + ' · snitt ' + a : '') + '&nbsp;</div>' +
+      '<div class="login-person-stats">' +
+        (count
+          ? count + ' vurdering' + (count!==1?'ar':'') + ' · snitt <span class="hi">' + avgVal + '</span><br>' +
+            (favTea ? '🏆 ' + favTea.name : '')
+          : '<em>Ikkje vurdert endå</em>') +
+      '</div>' +
+      '<div class="login-arrow">→</div>' +
       '</div>';
   }).join('');
 }
@@ -378,6 +480,32 @@ async function logout() {
   document.getElementById('login-screen').style.display = 'flex';
 }
 
+// ── Add tea modal ─────────────────────────────────────────────────────────────
+function openAddTeaModal() {
+  document.getElementById('add-tea-modal').style.display = 'flex';
+  document.getElementById('new-name').focus();
+}
+function closeAddTeaModal(e) {
+  if(!e || e.target === document.getElementById('add-tea-modal'))
+    document.getElementById('add-tea-modal').style.display = 'none';
+}
+function addTea() {
+  const brand = document.getElementById('new-brand').value.trim();
+  const name = document.getElementById('new-name').value.trim();
+  const url = document.getElementById('new-url').value.trim();
+  if(!name) { alert('Fyll inn namn på teen!'); return; }
+  if(getTeas().some(t => t.brand === brand && t.name === name)) { alert('Denne teen finst allereie!'); return; }
+  if(!remoteData._customTeas) remoteData._customTeas = [];
+  remoteData._customTeas.push({brand, name, url: url || ''});
+  scheduleSave();
+  document.getElementById('add-tea-modal').style.display = 'none';
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-url').value = '';
+  renderCards();
+  toast('☕ ' + name + ' lagt til!');
+}
+
+// ── Pages ─────────────────────────────────────────────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -387,7 +515,6 @@ function showPage(id) {
   if(id === 'profiles') renderProfiles();
   if(id === 'compare') renderCompare();
 }
-
 function setFilter(f, b) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
@@ -395,9 +522,11 @@ function setFilter(f, b) {
   renderCards();
 }
 
+// ── Rate page ─────────────────────────────────────────────────────────────────
 function renderCards() {
+  const teas = getTeas();
   const my = remoteData[currentUser] || {}, s = document.getElementById('search').value.toLowerCase();
-  const teas = TEAS.filter(t => {
+  const filtered = teas.filter(t => {
     const k = tk(t), ok = (t.name + t.brand).toLowerCase().includes(s);
     if(!ok) return false;
     if(currentFilter === 'unrated') return !(k in my);
@@ -405,16 +534,17 @@ function renderCards() {
     if(currentFilter !== 'all') return t.brand === currentFilter;
     return true;
   });
-  document.getElementById('rated-count').textContent = Object.keys(my).length;
-  document.getElementById('total-count').textContent = TEAS.length;
+  document.getElementById('rated-count').textContent = Object.keys(my).filter(k=>typeof my[k]==='number').length;
+  document.getElementById('total-count').textContent = teas.length;
   const cont = document.getElementById('tea-cards');
-  if(!teas.length) { cont.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🍵</div><p>Ingen te funne</p></div>'; return; }
-  cont.innerHTML = teas.map((t, i) => {
+  if(!filtered.length) { cont.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🍵</div><p>Ingen te funne</p></div>'; return; }
+  cont.innerHTML = filtered.map((t, i) => {
     const k = tk(t), score = my[k], has = score !== undefined, pct = has ? score/10*100 : 50, id = k.replace(/[^a-z0-9]/gi,'_');
+    const linkHtml = t.url ? '<a class="tea-link" href="' + t.url + '" target="_blank" onclick="event.stopPropagation()">↗ Sjå te på nett</a>' : '';
     return '<div class="tea-card" style="animation-delay:' + (i*.03) + 's">' +
       (has ? '<div class="my-score-badge">' + score + '</div>' : '') +
       '<div class="tea-card-brand ' + bc(t.brand) + '">' + t.brand + '</div>' +
-      '<div class="tea-card-name">' + t.name + '</div>' +
+      '<div class="tea-card-name">' + t.name + '</div>' + (linkHtml ? '<div style="margin-bottom:10px">' + linkHtml + '</div>' : '') +
       '<input type="range" min="0" max="10" step="1" value="' + (has?score:5) + '" class="score-slider" style="--pct:' + pct + '%" id="sl-' + id + '" oninput="upd(this,\'' + k + '\')">' +
       '<div class="score-display">' +
         '<div class="score-num" id="n-' + id + '">' + (has?score:5) + '</div>' +
@@ -442,23 +572,34 @@ function saveScore(k, btn) {
   let badge = card.querySelector('.my-score-badge');
   if(!badge) { badge = document.createElement('div'); badge.className = 'my-score-badge'; card.insertBefore(badge, card.firstChild); }
   badge.textContent = v;
-  toast(LABELS[v] + ' — ' + (TEAS.find(t => tk(t) === k) || {}).name);
+  const name = (getTeas().find(t => tk(t) === k) || {}).name || '';
+  toast(LABELS[v] + ' — ' + name);
   if(v >= 9 && wasNew) confetti();
-  document.getElementById('rated-count').textContent = Object.keys(remoteData[currentUser]).length;
+  document.getElementById('rated-count').textContent = Object.keys(remoteData[currentUser]).filter(k=>typeof remoteData[currentUser][k]==='number').length;
   scheduleSave();
 }
 
+// ── Overview ──────────────────────────────────────────────────────────────────
 function renderOverview() {
-  const ts = TEAS.map(t => { const k = tk(t), scores = PEOPLE.map(p => remoteData[p] && remoteData[p][k]).filter(v => v !== undefined); return {t, scores, avg: avg(scores), count: scores.length}; });
+  const teas = getTeas();
+  const ts = teas.map(t => {
+    const k = tk(t);
+    const scores = PEOPLE.map(p => remoteData[p] && remoteData[p][k]).filter(v => v !== undefined);
+    return {t, scores, avg: avg(scores), count: scores.length};
+  });
   const total = ts.reduce((a,b) => a + b.count, 0), rated = ts.filter(x => x.count > 0);
   const ga = rated.length ? avg(rated.map(x => x.avg)) : 0;
   const mv = ts.reduce((a,b) => b.count > a.count ? b : a, {count:0});
-  const mr = PEOPLE.reduce((a,b) => Object.keys(remoteData[b]||{}).length > Object.keys(remoteData[a]||{}).length ? b : a);
+  const mr = PEOPLE.reduce((a,b) => {
+    const ca = Object.values(remoteData[a]||{}).filter(v=>typeof v==='number').length;
+    const cb = Object.values(remoteData[b]||{}).filter(v=>typeof v==='number').length;
+    return cb > ca ? b : a;
+  });
   document.getElementById('stats-row').innerHTML = [
     {num:total, lbl:'Totale røyster'},{num:rated.length, lbl:'Te-sortar vurdert'},
-    {num:ga ? ga.toFixed(1) : '—', lbl:'Snittkarakter'},{num:PEOPLE.length, lbl:'Tessommelierar'}
+    {num:ga ? ga.toFixed(1) : '—', lbl:'Snittkarakter'},{num:teas.length, lbl:'Te-sortar totalt'}
   ].map(s => '<div class="stat-card"><div class="stat-num">' + s.num + '</div><div class="stat-label">' + s.lbl + '</div></div>').join('');
-  const mc = ts.filter(x => x.count >= 2).map(x => { const m = x.scores.reduce((a,b) => a+b,0)/x.scores.length; return {...x, vari: x.scores.reduce((a,b) => a+(b-m)**2,0)/x.scores.length}; }).sort((a,b) => b.vari - a.vari)[0];
+  const mc = ts.filter(x => x.count >= 2).map(x => { const m = x.scores.reduce((a,b)=>a+b,0)/x.scores.length; return {...x, vari: x.scores.reduce((a,b)=>a+(b-m)**2,0)/x.scores.length}; }).sort((a,b) => b.vari - a.vari)[0];
   const top1 = ts.filter(x => x.avg !== null).sort((a,b) => b.avg - a.avg)[0];
   const bot1 = ts.filter(x => x.avg !== null).sort((a,b) => a.avg - b.avg)[0];
   document.getElementById('fun-section').innerHTML = [
@@ -466,7 +607,7 @@ function renderOverview() {
     bot1 && bot1.avg < 5 ? {t:'😅 Minst populær', v:bot1.t.name, s:bot1.t.brand + ' · ' + bot1.avg.toFixed(1) + '/10'} : null,
     mc ? {t:'🤔 Mest omstridd', v:mc.t.name, s:'Stor usemje i teamet'} : null,
     mv.count > 0 ? {t:'🏷️ Mest vurdert', v:mv.t.name, s:mv.count + ' røyster'} : null,
-    {t:'🍵 Ivrigaste sommelier', v:mr, s:Object.keys(remoteData[mr]||{}).length + ' vurderingar'},
+    {t:'🍵 Ivrigaste sommelier', v:mr, s:Object.values(remoteData[mr]||{}).filter(v=>typeof v==='number').length + ' vurderingar'},
   ].filter(Boolean).map(f => '<div class="fun-card"><div class="fun-card-title">' + f.t + '</div><div class="fun-card-value">' + f.v + '</div><div class="fun-card-sub">' + f.s + '</div></div>').join('');
   const sorted = ts.filter(x => x.avg !== null).sort((a,b) => b.avg - a.avg);
   document.getElementById('leaderboard').innerHTML = sorted.slice(0,10).map((x,i) =>
@@ -484,8 +625,11 @@ function renderOverview() {
     '<div class="lb-score" style="color:var(--rose)">' + x.avg.toFixed(1) + '</div>' +
     '<div class="lb-votes">' + x.count + ' 🗳️</div></div>'
   ).join('') || '<div class="empty"><p>Ikkje nok data</p></div>';
-  const brands = [...new Set(TEAS.map(t => t.brand))];
-  const bA = brands.map(b => { const scores = TEAS.filter(t => t.brand===b).flatMap(t => PEOPLE.map(p => remoteData[p] && remoteData[p][tk(t)]).filter(v => v !== undefined)); return {b, a: avg(scores)}; }).filter(x => x.a !== null).sort((a,b) => b.a - a.a);
+  const brands = [...new Set(teas.map(t => t.brand))];
+  const bA = brands.map(b => {
+    const scores = teas.filter(t => t.brand===b).flatMap(t => PEOPLE.map(p => remoteData[p] && remoteData[p][tk(t)]).filter(v => v !== undefined));
+    return {b, a: avg(scores)};
+  }).filter(x => x.a !== null).sort((a,b) => b.a - a.a);
   const mx = Math.max(...bA.map(x => x.a), 1);
   const bC = {'Yogi Tea':'#6B3FA0','Pukka':'#4A7C2B','English Tea Shop':'#C4614A','Just T':'#C8922A','Organic India':'#2D5016'};
   document.getElementById('brand-breakdown').innerHTML = bA.map(x =>
@@ -495,12 +639,16 @@ function renderOverview() {
   ).join('');
 }
 
+// ── Profiles ──────────────────────────────────────────────────────────────────
 function renderProfiles() {
+  const teas = getTeas();
   document.getElementById('profiles-grid').innerHTML = PEOPLE.map(n => {
-    const r = remoteData[n] || {}, s = Object.values(r), c = s.length, a = c ? s.reduce((x,y) => x+y,0)/c : 0;
-    const t1 = c ? Object.entries(r).sort((a,b) => b[1]-a[1])[0] : null;
-    const fav = t1 ? TEAS.find(t => tk(t) === t1[0]) : null;
-    const hi = s.length ? Math.max(...s) : '—';
+    const r = remoteData[n] || {};
+    const s = Object.entries(r).filter(([,v])=>typeof v==='number');
+    const c = s.length, a = c ? s.reduce((x,[,y])=>x+y,0)/c : 0;
+    const t1 = c ? s.sort((a,b)=>b[1]-a[1])[0] : null;
+    const fav = t1 ? teas.find(t => tk(t) === t1[0]) : null;
+    const hi = c ? Math.max(...s.map(([,v])=>v)) : '—';
     return '<div class="profile-card">' +
       '<div class="profile-top"><div class="profile-avatar">' + ini(n) + '</div>' +
       '<div><div class="profile-name">' + n + '</div><div class="profile-subtitle">' + c + ' vurdering' + (c!==1?'ar':'') + (c?' · snitt ' + a.toFixed(1):'') + '</div></div></div>' +
@@ -514,26 +662,30 @@ function renderProfiles() {
   }).join('');
 }
 
+// ── Compare ───────────────────────────────────────────────────────────────────
 function renderCompare() {
   document.getElementById('compare-people').innerHTML = PEOPLE.map(p =>
     '<button class="filter-btn' + (comparePeople.includes(p)?' active':'') + '" onclick="toggleCmp(\'' + p + '\',this)">' + p + '</button>'
   ).join('');
   renderCmpTable();
 }
-
 function toggleCmp(n, b) {
   comparePeople.includes(n) ? comparePeople.splice(comparePeople.indexOf(n),1) : comparePeople.push(n);
   b.classList.toggle('active');
   renderCmpTable();
 }
-
 function renderCmpTable() {
+  const teas = getTeas();
   const ppl = comparePeople.length ? comparePeople : PEOPLE.slice(0,3);
-  const rows = TEAS.map(t => { const k = tk(t), scores = ppl.map(p => remoteData[p] && remoteData[p][k]); return {t, scores, any: scores.some(s => s !== undefined)}; }).filter(x => x.any);
+  const rows = teas.map(t => {
+    const k = tk(t), scores = ppl.map(p => remoteData[p] && remoteData[p][k]);
+    return {t, scores, any: scores.some(s => s !== undefined)};
+  }).filter(x => x.any);
   const w = document.getElementById('compare-table-wrap');
   if(!rows.length) { w.innerHTML = '<div class="empty"><div class="empty-icon">🫖</div><p>Vel personar og gi vurderingar for å samanlikne</p></div>'; return; }
   const pill = s => s === undefined ? '<span class="score-pill none">—</span>' : '<span class="score-pill ' + (s>=7?'good':s>=4?'mid':'low') + '">' + s + '</span>';
-  w.innerHTML = '<div style="overflow-x:auto"><table class="compare-table"><thead><tr><th>Te</th>' + ppl.map(p => '<th>' + p + '</th>').join('') + '<th>Diff</th></tr></thead><tbody>' +
+  w.innerHTML = '<div style="overflow-x:auto"><table class="compare-table"><thead><tr><th>Te</th>' +
+    ppl.map(p => '<th>' + p + '</th>').join('') + '<th>Diff</th></tr></thead><tbody>' +
     rows.map(({t, scores}) => {
       const d = scores.filter(s => s !== undefined);
       const diff = d.length >= 2 ? Math.max(...d) - Math.min(...d) : '—';
